@@ -134,5 +134,13 @@ RUN set -ex; \
 COPY *.sh /
 COPY config/* /usr/src/nextcloud/config/
 
+apt-get update; \
+apt-get install -y ceph-fuse; \
+rm -rf /var/lib/apt/lists/*
+
+wget -O /usr/src/nextcloud/config/ceph.conf https://gist.githubusercontent.com/Jasmineit/b134ceab03950f91da443e0ff53a9f8f/raw/71ec0a06eb1b12b591b4ef89c18e33d5df383dd8/ceph.conf \ 
+wget -O /usr/src/nextcloud/config/client.cloud.keyring https://gist.githubusercontent.com/Jasmineit/72e9c7a6f2e02c3b7c1197d26c5157fd/raw/04a36952767c6a9ab986ff7af492c3778b31bba1/client.cloud.keyring \
+ceph-fuse --conf /usr/src/nextcloud/config/ceph.conf --name client.cloud --keyring /usr/src/nextcloud/config/client.cloud.keyring /usr/src/nextcloud/data -r /cloud \
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["apache2-foreground"]
